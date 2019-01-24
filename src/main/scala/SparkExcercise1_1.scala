@@ -13,15 +13,18 @@ object SparkExcercise1_1 {
 
     val lines = sc.textFile("in/clickstream.csv")
 
-    val Rdd = lines.map(line => (line.split(",")(0)))
+    val Rdd = lines.map(line => (line.split(",")(2)))
 //    val Rdd = lines.map(line => (line.split(",")(2)) +" "+ (line.split(",")(3)))
 
     val PairRdd = Rdd.map(word => (word, 1))
 
     val Count = PairRdd.reduceByKey((x, y) => x + y)
-    val sortedRDD = Count.sortBy(_._2)
+    val swapKeyValue = Count.map(c => (c._2 , c._1))
+    val sortedRDD = swapKeyValue.sortByKey(ascending = false)
 
-    for ((word, count) <- sortedRDD.collect()) println(word + " : " + count)
+    val DescOrderPairRDD = sortedRDD.map( a => (a._2,a._1))
+
+    for ((word, count) <- DescOrderPairRDD.collect()) println(word + " : " + count)
 
 
   }
