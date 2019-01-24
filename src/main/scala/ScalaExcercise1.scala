@@ -12,16 +12,18 @@ object ScalaExcercise1 {
 
     for (line <- bufferedSource.getLines) {
       val cols = line.split(",").map(_.trim)
-      listArr ::= cols(0)
+      listArr ::= cols(2)
     }
 
-    val userMap = listArr.groupBy(identity).mapValues(_.size)
-    userMap.keys.foreach {
-      i =>
-        print(i)
-        println(" : " + userMap(i))
+    val userList = listArr.groupBy(identity).mapValues(_.size).toList
+    val sortedList = userList.sortBy(_._2).reverse
+
+
+    for (user <- sortedList) {
+      print(user._1)
+      println(" : " + user._2)
     }
-    bufferedSource.close
+
+
   }
-
 }
