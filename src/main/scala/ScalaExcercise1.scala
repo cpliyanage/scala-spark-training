@@ -18,12 +18,10 @@ object ScalaExcercise1 {
     val userList = listArr.groupBy(identity).mapValues(_.size).toList
     val sortedList = userList.sortBy(_._2).reverse
 
-
-    for (user <- sortedList) {
+    for (user <- sortedList.take(5)) {
       print(user._1)
       println(" : " + user._2)
     }
-
 
   }
 }
