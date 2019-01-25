@@ -1,27 +1,44 @@
-import scala.io.Source
+import scala.io.{BufferedSource, Source}
 
 /**
   * Created by akash on 1/24/19.
   */
 object ScalaExcercise1 {
+  val bufferedSource = Source.fromFile("in/clickstream.csv")
 
   def main(args: Array[String]): Unit = {
 
-    val bufferedSource = Source.fromFile("in/clickstream.csv")
+    val listArray = getLinesToListArr(bufferedSource, List(0,1))
+
+    val groupedData = listArray.groupBy(identity).mapValues(_.size).toList
+    val sortedListData = groupedData.sortBy(_._2).reverse
+
+    printResult(sortedListData)
+  }
+
+
+  def getLinesToListArr (bufferedSourc: BufferedSource, list: List[Int]) : List[String] = {
+
     var listArr = List[String]()
+    val listLen : Int = list.length
 
-    for (line <- bufferedSource.getLines) {
+    for (line <- bufferedSourc.getLines) {
       val cols = line.split(",").map(_.trim)
-      listArr ::= cols(2)
+      listLen match {
+        case 1  => listArr ::= cols(list(0))
+        case 2  => listArr ::= cols(list(0)) + "," + cols(list(1))
+        case 3  => listArr ::= cols(list(0))  + "," + cols(list(1))  + "," + cols(list(2))
+        case 4  => listArr ::= cols(list(0))  + "," + cols(list(1))  + "," + cols(list(2))  + "," + cols(list(3))
+      }
     }
+    return listArr
+  }
 
-    val userList = listArr.groupBy(identity).mapValues(_.size).toList
-    val sortedList = userList.sortBy(_._2).reverse
-
-    for (user <- sortedList.take(5)) {
+  def printResult (list :  Seq[(String, Int)]) = {
+    for (user <- list.take(5)) {
       print(user._1)
       println(" : " + user._2)
     }
-
   }
+
 }
