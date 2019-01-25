@@ -8,14 +8,14 @@ object ScalaExcercise1 {
 
   def main(args: Array[String]): Unit = {
 
-    val listArray = getLinesToListArr(bufferedSource, List(0,1))
+    val listArray = getLinesToListArr(bufferedSource, getChoiseOfGrouping(List("user")))
 
     val groupedData = listArray.groupBy(identity).mapValues(_.size).toList
     val sortedListData = groupedData.sortBy(_._2).reverse
 
     printResult(sortedListData)
-  }
 
+  }
 
   def getLinesToListArr (bufferedSourc: BufferedSource, list: List[Int]) : List[String] = {
 
@@ -39,6 +39,22 @@ object ScalaExcercise1 {
       print(user._1)
       println(" : " + user._2)
     }
+  }
+
+  def getChoiseOfGrouping(list: List[String]) : List[Int] = {
+
+    val builder = List.newBuilder[Int]
+    val colors = Map("user" -> 0, "category" -> 1, "productId" -> 2, "channel" -> 3)
+
+    for ((k,v) <- colors){
+      list.foreach(
+        a =>
+          if (a == k){
+            builder += v
+          }
+      )
+    }
+    return builder.result()
   }
 
 }
