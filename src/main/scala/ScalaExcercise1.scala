@@ -8,7 +8,7 @@ object ScalaExcercise1 {
 
   def main(args: Array[String]): Unit = {
 
-    val csvLines: List[String] = readCsvLinesToStringList()
+    val csvLines: List[String] = readCsvLinesToStringList(bufferedSource)
     val listArray: List[String] = getlistArrayByUserChoise(getUserChoiseOfGroupingToIntList(List("user")), csvLines)
 
     val groupedData = listArray.groupBy(identity).mapValues(_.size).toList
@@ -35,9 +35,9 @@ object ScalaExcercise1 {
     return listArr
   }
 
-  def readCsvLinesToStringList () : List[String] = {
+  def readCsvLinesToStringList (bufferedSrc: BufferedSource) : List[String] = {
     var lineList = List[String]()
-    for (line: String <- bufferedSource.getLines) {
+    for (line: String <- bufferedSrc.getLines) {
       lineList ::= line
     }
     return lineList
