@@ -17,7 +17,7 @@ object SparkExcercise1_1 {
     val lines: RDD[String] = sc.textFile("in/clickstream.csv")
 
 
-    val listArr = ScalaExcercise1.getChoiseOfGrouping(List("user", "category"))
+    val listArr = ScalaExcercise1.getUserChoiseOfGroupingToIntList(List("user", "category"))
 
     val Rdd = getLinesToListArr(lines,listArr)
 
