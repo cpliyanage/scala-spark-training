@@ -9,10 +9,8 @@ object ScalaExcercise1 {
   def main(args: Array[String]): Unit = {
 
     val csvLines: List[String] = readCsvLinesToStringList(bufferedSource)
-    val listArray: List[String] = getlistArrayByUserChoise(getUserChoiseOfGroupingToIntList(List("user")), csvLines)
-
-    val groupedData = listArray.groupBy(identity).mapValues(_.size).toList
-    val sortedListData = groupedData.sortBy(_._2).reverse
+    val listArray: List[String] = getlistArrayByUserChoise(getUserChoiseOfGroupingToIntList(List("category")), csvLines)
+    val sortedListData: List[(String, Int)] = aggregateTheResults(listArray)
 
     printResult(sortedListData)
   }
@@ -64,6 +62,11 @@ object ScalaExcercise1 {
       )
     }
     return builder.result()
+  }
+
+  def aggregateTheResults (listArr: List[String]): List[(String, Int)] = {
+    val groupedData: List[(String, Int)] = listArr.groupBy(identity).mapValues(_.size).toList
+    return groupedData.sortBy(_._2).reverse
   }
 
 }

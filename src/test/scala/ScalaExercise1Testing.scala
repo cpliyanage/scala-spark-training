@@ -25,7 +25,7 @@ class ScalaExercise1Testing extends FlatSpec{
 
   }
 
-  val userChoise = List("User")
+  val userChoise = List("user")
 
 
 
@@ -38,9 +38,11 @@ class ScalaExercise1Testing extends FlatSpec{
 
   "getlistArrayByUserChoise method " should "return list consist with the fields specified by the user" in {
 
+    val list1 = ScalaExcercise1.getlistArrayByUserChoise(List(0), listString)
+    assert(list1 === List("user1", "user3", "user2", "user1"))
 
   }
-sfbgdfg
+
 //
 //  it should "throw NoSuchElementException if an empty stack is popped" in {
 //    val emptyStack = new mutable.Stack[String]
