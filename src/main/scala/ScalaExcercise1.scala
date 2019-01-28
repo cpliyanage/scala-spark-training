@@ -8,21 +8,22 @@ object ScalaExcercise1 {
 
   def main(args: Array[String]): Unit = {
 
-    val listArray = getLinesToListArr(bufferedSource, getChoiseOfGrouping(List("user")))
+    val csvLines: List[String] = readCsvLinesToStringList()
+    val listArray: List[String] = getlistArrayByUserChoise(getUserChoiseOfGroupingToIntList(List("user")), csvLines)
 
     val groupedData = listArray.groupBy(identity).mapValues(_.size).toList
     val sortedListData = groupedData.sortBy(_._2).reverse
 
     printResult(sortedListData)
-
   }
 
-  def getLinesToListArr (bufferedSourc: BufferedSource, list: List[Int]) : List[String] = {
+
+  def getlistArrayByUserChoise ( list: List[Int], lines: List[String]) : List[String] = {
 
     var listArr = List[String]()
     val listLen : Int = list.length
 
-    for (line <- bufferedSourc.getLines) {
+    for (line: String <- lines) {
       val cols = line.split(",").map(_.trim)
       listLen match {
         case 1  => listArr ::= cols(list(0))
@@ -34,6 +35,14 @@ object ScalaExcercise1 {
     return listArr
   }
 
+  def readCsvLinesToStringList () : List[String] = {
+    var lineList = List[String]()
+    for (line: String <- bufferedSource.getLines) {
+      lineList ::= line
+    }
+    return lineList
+  }
+
   def printResult (list :  Seq[(String, Int)]) = {
     for (user <- list.take(5)) {
       print(user._1)
@@ -41,7 +50,7 @@ object ScalaExcercise1 {
     }
   }
 
-  def getChoiseOfGrouping(list: List[String]) : List[Int] = {
+  def getUserChoiseOfGroupingToIntList (list: List[String]) : List[Int] = {
 
     val builder = List.newBuilder[Int]
     val colors = Map("user" -> 0, "category" -> 1, "productId" -> 2, "channel" -> 3)
