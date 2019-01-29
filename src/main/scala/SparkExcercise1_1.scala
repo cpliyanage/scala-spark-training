@@ -13,34 +13,35 @@ object SparkExcercise1_1 {
     Logger.getLogger("org").setLevel(Level.ERROR)
     val conf = new SparkConf().setAppName("SparkClickCount").setMaster("local[3]")
     val sc = new SparkContext(conf)
-
-    val lines: RDD[String] = sc.textFile("in/clickstream.csv")
-
-
-    val listArr = ScalaExcercise1.getUserChoiseOfGroupingToIntList(List("user", "category"))
-
-    val Rdd = getLinesToListArr(lines,listArr)
-
-    val PairRdd = Rdd.map(word => (word, 1))
-
-    val Count = PairRdd.reduceByKey((x, y) => x + y)
-    val swapKeyValue = Count.map(c => (c._2 , c._1))
-    val sortedRDD = swapKeyValue.sortByKey(ascending = false)
-
-    val DescOrderPairRDD: RDD[(String, Int)] = sortedRDD.map(a => (a._2,a._1))
-
-    printResult(DescOrderPairRDD)
+    val linesRDD: RDD[String] = sc.textFile("in/clickstream.csv")
 
 
+    val userChoiseIntListArr: List[Int] = ScalaExcercise1.getUserChoiseOfGroupingToIntList(List("user", "category"))
+    val pairRdd: RDD[(String, Int)] = getPairRDD(linesRDD, userChoiseIntListArr)
+    val sortedRDD: RDD[(Int, String)] = aggregateTheResult(pairRdd)
+    val reArrangePairRDD: RDD[(String, Int)] = sortedRDD.map(a => (a._2,a._1))
+
+    printResult(reArrangePairRDD)
+
+
+  }
+
+  def aggregateTheResult (PairRdd: RDD[(String, Int)]) : RDD[(Int, String)] = {
+    val Count: RDD[(String, Int)] = PairRdd.reduceByKey((x, y) => x + y)
+    val swapKeyValue: RDD[(Int, String)] = Count.map(c => (c._2 , c._1))
+    return swapKeyValue.sortByKey(ascending = false)
+  }
+
+  def getPairRDD (rdd :RDD[String], intListArr:List[Int] ) : RDD[(String, Int)] = {
+    val Rdd: RDD[String] = getCsvLinesToListArr(rdd,intListArr)
+    return Rdd.map(word => (word, 1))
   }
 
   def printResult (PairRDD: RDD[(String, Int)]) = {
-
     for ((word, count) <- PairRDD.collect()) println(word + " : " + count)
   }
 
-  def getLinesToListArr (lines: RDD[String], list: List[Int]) : RDD[String]  = {
-
+  def getCsvLinesToListArr (lines: RDD[String], list: List[Int]) : RDD[String]  = {
     val listLen : Int = list.length
       listLen match {
         case 1  => return lines.map(line => (line.split(",")(list(0))))

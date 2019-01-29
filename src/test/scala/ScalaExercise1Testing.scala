@@ -11,7 +11,6 @@ class ScalaExercise1Testing extends FlatSpec{
 
   val bufferedSource = Source.fromFile("in/Testing.csv")
   val listString: List[String] = List("user1,Clothing,product1,Webstore" , "user2,Kitchen,product2,Mobile", "user3,Clothing,product3,Webstore", "user1,Bathroom,product4,Tablet")
-
   val selectedColList = List("user1", "user3", "user2", "user1")
   val sortedList: List[(String, Int)] = List(("user1", 2),("user2", 1),("user3", 1))
 
