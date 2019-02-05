@@ -23,7 +23,7 @@ class ScalaExercise1Testing extends FlatSpec{
   val userChoise = List("user")
   "getUserChoiseOfGroupingToIntList method" should "return list of Intergers that map the user choise" in {
     val list = ScalaExcercise1.getUserChoiseOfGroupingToIntList(userChoise)
-    assert(list === List(0))
+    assert(list === List(1))
   }
 
   "getlistArrayByUserChoise method " should "return list consist with the fields specified by the user" in {
