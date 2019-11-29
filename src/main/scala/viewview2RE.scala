@@ -31,10 +31,13 @@ object viewview2RE {
     import spark.implicits._
 
     val parquetFileDF = spark.read.parquet("in/viewview2.parquet")
-    val flattenSource: Dataset[Row] = filterbyPagetype( channel, parquetFileDF)
+
+    val flattenSource = filterbyPagetype(Some("tablet web"), parquetFileDF)
+    //flattenSource.show(false)
     val a1 = flattenSkuProductColumn(flattenSource)
+
     val a2 = calcuateVscore(0.01, a1)
-    a2.show(5)
+//    a2.show(5)
 
     val cs_filtered_productviews = filterProductViews(a2)
     //flattenSource.show()
@@ -42,10 +45,10 @@ object viewview2RE {
     // ************ first part ************************
 
     val cs_productviews_productscore_session_1 = combinedScoreOfProductInSession(cs_filtered_productviews)
-    //cs_productviews_productscore_session_1.show()
+   // cs_productviews_productscore_session_1.show()
 
     val product_scores = calculateScoresPerProductid(cs_productviews_productscore_session_1)
-    //product_scores.show()
+   // product_scores.show()
 
     // *************************First session with click stream done ********************************
 
@@ -64,15 +67,15 @@ object viewview2RE {
     val c1 = sku_data.select(col("sku_id"), col("parent_product_id"), col("product_primary_type_value"), col("product_type_value"), col("product_sub_type_value"))
     val c2 = skuFilterProducts(c1)
     val sku_filtered_data = renameFilterProducts(c2)
-    sku_filtered_data.show()
+//    sku_filtered_data.show()
 
 
-    val endeca_sku = spark.read.format("com.databricks.spark.avro").load("in/endeca/part-00088.avro")
+    val endeca_sku: DataFrame = spark.read.format("com.databricks.spark.avro").load("in/endeca/part-00088.avro")
     val inventory_skus = endeca_sku.select(col("s_code") as "sku_id").distinct()
 
     val inventory_products = inventory_skus.join(sku_filtered_data, "sku_id").select(col("product_id")).distinct().withColumnRenamed("product_id", "productid")
     //productscores_p1p2p3.printSchema()
-    inventory_skus.printSchema()
+   // inventory_skus.printSchema()
 
 
     val available_productscores_p1p2p3 = productscores_p1p2p3.join(inventory_products, "productid")
@@ -205,7 +208,6 @@ object viewview2RE {
 
 
 
-
   }
 
   def calculate_ismeasure = udf((AB_score: Double,A_score: Double, product_score: Double) => {
@@ -243,6 +245,12 @@ object viewview2RE {
     productcatalog_selected_columns
   }
 
+  def filterbyPagetype (channel: Option[String], df: DataFrame) : DataFrame = channel match {
+    case Some(CHANEL_MOBILE_WEB)  => (df.filter(col(EVENT_NM) === EVENT_PRODUCT_VIEW && col(HOST_NAME_CLASS) === CHANEL_MOBILE_WEB ))
+    case Some(CHANEL_TABLET_WEB)  => (df.filter(col(EVENT_NM) === EVENT_PRODUCT_VIEW && col(HOST_NAME_CLASS) === CHANEL_TABLET_WEB ))
+    case _ => (df.filter(col(EVENT_NM) === EVENT_PRODUCT_VIEW))
+  }
+
   def calculateScoresPerProductid (df: Dataset[Row]) = {
     val product_scores = df.groupBy(col(S_PRODUCT_ID))
       .agg(sum(col(VIEW_SCORE)))
@@ -257,12 +265,7 @@ object viewview2RE {
     cs_productviews_productscore_session
   }
 
-  def filterbyPagetype (channel :Option[String], df: Dataset[Row])  = channel match {
 
-    case Some("mobile web") => (df.filter(col(EVENT_NM) === EVENT_PRODUCT_VIEW && col("host_name_class") === "mobile web" ))
-    case Some("tablet web")  => (df.filter(col(EVENT_NM) === EVENT_PRODUCT_VIEW && col("host_name_class") === "tablet web" ))
-    case _ => (df.filter(col(EVENT_NM) === EVENT_PRODUCT_VIEW))
-  }
 
   def flattenSkuProductColumn(df: Dataset[Row])  = {
     val flattenSource: Dataset[Row] = df.select(col(POST_VISID_HIGH), col(POST_VISID_LOW), col(VISIT_NUM), col(DATE_TIME),
@@ -277,8 +280,8 @@ object viewview2RE {
 
 
   def vscore(decayValue: Double) = udf((longDate: Long) => {
-    println(longDate.toInt)
-    println(longDate)
+   // println(longDate.toInt)
+   // println(longDate)
     val date = new Date
     val dateFmt = "yyyy-MM-dd"
     val sdf = new SimpleDateFormat(dateFmt)

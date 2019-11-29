@@ -16,6 +16,12 @@ dependencies {
     compile group: 'org.apache.spark', name: 'spark-sql_2.11', version: '2.2.0'
     compile group: 'org.scala-lang', name: 'scala-library', version: '2.11.11'
 
+
+
+    // https://mvnrepository.com/artifact/com.databricks/spark-avro
+    compile group: 'com.databricks', name: 'spark-avro_2.11', version: '3.0.0'
+
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.scalatest', name: 'scalatest_2.11', version: '3.0.1'
 }

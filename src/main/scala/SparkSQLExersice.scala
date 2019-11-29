@@ -17,13 +17,10 @@ object SparkSQLExersice {
     val responses = dataFrameReader
       .option("header", "false")
       .option("inferSchema", value = false)
-      .csv("in/clickstream.csv")
+      .csv("/home/akash/Downloads/spark.csv")
 
-    val responseWithSelectedColumns = responses.select(responses("_c0"), responses("_c1"), responses("_c2"), responses("_c3"))
 
-    val groupedData = responseWithSelectedColumns.groupBy(responses("_c0"))
-    val groupDataWithCount = groupedData.count()
-    groupDataWithCount.orderBy(groupDataWithCount.col("count").desc).show(5)
+    responses.show(1000,false)
 
     session.stop()
 

@@ -239,7 +239,7 @@ object viewview2 {
     val result = productpairs_finalscore.groupBy(col("productid_A"))
       .agg(collect_list(array(col("productid_A"), col("productid_B"), col("finalcalscore"))) as "collectedColumn")
       .map{r =>
-        val key = r.getAs[String]("productid_A")
+        val key: String = r.getAs[String]("productid_A")
         val recs: Seq[(String, String, String)] = r.getAs("collectedColumn").asInstanceOf[Seq[Seq[String]]]
           .map(r => (r(0), r(1), r(2)))
           .sortBy(_._3)

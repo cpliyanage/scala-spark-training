@@ -1,6 +1,8 @@
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
+//import com.twitter.scalding.Args
+
 
 import scala.io.BufferedSource
 
@@ -10,6 +12,9 @@ import scala.io.BufferedSource
 object SparkExcercise1_1 {
 
   def main(args: Array[String]) {
+
+//    val params = Args(args)
+//    println(args)
     Logger.getLogger("org").setLevel(Level.ERROR)
     val conf = new SparkConf().setAppName("SparkClickCount").setMaster("local[3]")
     val sc = new SparkContext(conf)
